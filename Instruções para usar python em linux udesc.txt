@@ -1,0 +1,6 @@
+senha sudo:udesc
+
+sudo apt-get isntall python-pip
+python -m pip install --upgrade pip
+pip install --user numpy scipy matplotlib ipython jupyter pandas sympy nose
+sudp apt-get install python-tk
