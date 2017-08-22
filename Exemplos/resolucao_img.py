@@ -20,7 +20,7 @@ def GeraNivel(input , T, output):
 input = path + "lena.jpg"
 output = path + "piramide.png"
 
-GeraNivel(input , 8, output)
+GeraNivel(input , 4, output)
 
 resultado = scipy .misc.imread(output)
 plt .imshow(resultado)

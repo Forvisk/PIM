@@ -1,5 +1,3 @@
-#Exercicio
-#Adaptar o programa anterior para que crie uma imagem cuja amostragem seja a média de cada área T × T pixels da imagem original
 
 import scipy.misc
 import matplotlib.pyplot as plt
@@ -12,9 +10,36 @@ def GeraNivel(input , T, output):
 	data = []
 	for i in range(0,H,T):
 		row = []
-		for j in range(0,W,T):
-			lvl = imagemIN[i][j]
-			row.append([ lvl , lvl , lvl ])
+		if i+T <= H:
+			for j in range(0,W,T):
+				lvl = 0
+				c = 0
+				for i1 in range(i, i+T):
+					if j+T <= W:
+						for j1 in range(j, j+T):
+								lvl = lvl + imagemIN[i][j]
+								c += 1
+					else:
+						for j1 in range(j, W):
+								lvl = lvl + imagemIN[i][j]
+								c += 1
+				lvl = lvl // c
+				row.append([ lvl , lvl , lvl ])
+		else:
+			for j in range(0,W,T):
+				lvl = 0
+				c = 0
+				for i1 in range(i, i+T):
+					if j+T <= W:
+						for j1 in range(j, j+T):
+								lvl = lvl + imagemIN[i][j]
+								c += 1
+					else:
+						for j1 in range(j, W):	
+								lvl = lvl + imagemIN[i][j]
+								c += 1
+				lvl = lvl // c
+				row.append([ lvl , lvl , lvl ])
 		data.append(row)
 
 	scipy .misc.imsave(output,data)
@@ -23,7 +48,7 @@ def GeraNivel(input , T, output):
 input = path + "lena.jpg"
 output = path + "piramide.png"
 
-GeraNivel(input , 8, output)
+GeraNivel(input , 4, output)
 
 resultado = scipy .misc.imread(output)
 plt .imshow(resultado)
