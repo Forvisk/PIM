@@ -6,9 +6,9 @@ path = "imagens/"
 
 def GeraTabuleiro(W, H, T, filename):
 	tabuleiro = []
-	for i = 0 in range(0, H):
+	for i in range(0, H):
 		linha = []
-		for j = 0 in range(0, W):
+		for j in range(0, W):
 			ponto = 0
 			if ( j/T % 2 == 0):
 				if( i/T % 2 == 0):
@@ -22,7 +22,7 @@ def GeraTabuleiro(W, H, T, filename):
 					ponto = 255
 			linha.append([ponto, ponto, ponto])
 		tabuleiro.append(linha)		
-	scipy.misc.imsave(path+filename,data)
+	scipy.misc.imsave(path+filename,tabuleiro)
 
 #____________________
 
