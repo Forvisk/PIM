@@ -7,13 +7,15 @@ sudo apt-get update
 sudo apt-get install sublime-text
 
 
-$ sudo apt-get install python-pip
-$ python -m pip install --upgrade pip
-$ pip install --user numpy scipy matplotlib ipython jupyter pandas sympy nose
-$ sudo apt-get install python-tk
+sudo apt-get install python-pip
+
+python -m pip install --upgrade pip
+pip install --user numpy scipy matplotlib ipython jupyter pandas sympy nose
+sudo apt-get install python-tk
 
 baixar PIL 1.1.7 (all plataforms) http://www.pythonware.com/products/pil/
-$ tar xvfz Imaging-1.1.7.tar.gz
-$ cd Imaging-1.1.7
-$ sudo python setup.py install
+
+tar xvfz Imaging-1.1.7.tar.gz
+cd Imaging-1.1.7
+sudo python setup.py install
 
