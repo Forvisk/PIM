@@ -41,8 +41,7 @@ def GeraNivel(input , T, output):
 				lvl = lvl // c
 				row.append([ lvl , lvl , lvl ])
 		data.append(row)
-
-	scipy .misc.imsave(output,data)
+	scipy.misc.imsave(output,data)
 # ================================================================================
 
 input = path + "lena.jpg"
