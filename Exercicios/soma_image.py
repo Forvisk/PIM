@@ -15,7 +15,7 @@ def soma(imagem1, imagem2):
 		return
 		
 	
-soma(path+"xadrez_borda.png", path+"python.png")
+soma(path+"ex1.png", path+"python.png")
 soma(path+"lena.jpg", path+"python.png")
 
 
