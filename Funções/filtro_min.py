@@ -4,7 +4,7 @@ import scipy.misc as scpm
 path = "imagens/"
 pathnew = "imagens/aut/"
 
-def mascara3x3( input, ext):
+def minima( input, ext):
 	inimg = scpm.imread(path + input + ext)
 	size = inimg.shape
 	outimg = []
@@ -43,8 +43,8 @@ def mascara3x3( input, ext):
 							#print [i, j, i2, j2]
 							if ( j+j2 in range(0, size[1])):
 								pixelR = min(pixelR, inimg[i + i2][j + j2][0])
-								pixelG = min(pixelG, inimg[i + i2][j + j2][0])
-								pixelB = min(pixelB, inimg[i + i2][j + j2][0])
+								pixelG = min(pixelG, inimg[i + i2][j + j2][1])
+								pixelB = min(pixelB, inimg[i + i2][j + j2][2])
 				row.append( [ pixelR, pixelG, pixelB])
 				#row.append(pixel)
 			outimg.append(row)
@@ -53,13 +53,13 @@ def mascara3x3( input, ext):
 	
 #input = "shapes"
 #ext = ".png"
-#mascara3x3(input, ext)
+#minima(input, ext)
 
 #input = "python"
 #ext = ".png"
-#mascara3x3(input, ext)
+#minima(input, ext)
 
 input = "lena"
 ext = ".jpg"
-mascara3x3(input, ext)
+minima(input, ext)
 

@@ -4,7 +4,7 @@ import scipy.misc as scpm
 path = "imagens/"
 pathnew = "imagens/aut/"
 
-def mascara3x3( input, ext):
+def mediana( input, ext):
 	inimg = scpm.imread(path + input + ext)
 	size = inimg.shape
 	outimg = []
@@ -44,8 +44,8 @@ def mascara3x3( input, ext):
 							#print [i, j, i2, j2]
 							if ( j+j2 in range(0, size[1])):
 								vetorR.append( inimg[i + i2][j + j2][0])
-								vetorG.append( inimg[i + i2][j + j2][0])
-								vetorB.append( inimg[i + i2][j + j2][0])
+								vetorG.append( inimg[i + i2][j + j2][1])
+								vetorB.append( inimg[i + i2][j + j2][2])
 								#nelem += 1
 				#vetorR.sort()
 				#vetorG.sort()
@@ -68,13 +68,13 @@ def mediana( vetor):
 	
 #input = "shapes"
 #ext = ".png"
-#mascara3x3(input, ext)
+#mediana(input, ext)
 
-input = "python"
-ext = ".png"
-mascara3x3(input, ext)
+#input = "python"
+#ext = ".png"
+#mediana(input, ext)
 
 input = "lena"
 ext = ".jpg"
-mascara3x3(input, ext)
+mediana(input, ext)
 
