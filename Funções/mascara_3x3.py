@@ -7,9 +7,13 @@ pathnew = "imagens/aut/"
 def mascara3x3( input, ext):
 	inimg = scpm.imread(path + input + ext)
 	size = inimg.shape
-	mascara = [	[1,1,1],
-				[1,1,1],
-				[1,1,1]
+	#mascara = [	[1,1,1],
+	#			[1,1,1],
+	#			[1,1,1]
+	#			]
+	mascara = [	[5,5,5],
+				[-5,-5,-5],
+				[-15,-15,-15]
 				]
 	#print mascara
 	outimg = []
@@ -27,7 +31,9 @@ def mascara3x3( input, ext):
 							#print [i, j, i2, j2]
 							if ( j+j2 in range(0, size[1])):
 								pixel += inimg[i + i2][j + j2]*mascara[1+i2][1+j2]
-								count += mascara[1+i2][1+j2]
+								count += abs(mascara[1+i2][1+j2])
+				if (count == 0):
+					count = 1
 				pixel = pixel / count
 				#print count
 				row.append( [ pixel, pixel, pixel])
