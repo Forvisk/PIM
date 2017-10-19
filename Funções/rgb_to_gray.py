@@ -33,7 +33,7 @@ def rgb_to_grey( input, ext):
 	scpm.imsave(pathnew + output, outimg)
 	return output
 	
-input = "mandril"
+input = "monogatari timeline"
 ext = ".jpg"
 print rgb_to_grey(input, ext)
 

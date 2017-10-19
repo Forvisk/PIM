@@ -3,11 +3,12 @@ import scipy.misc as spm
 import matplotlib.pyplot as plt
 
 path = "imagens/"
+pathnew = "imagens/aut/"
 
-def binariza(input, threshold):
-	imagem = spm.imread(input)
+def binariza( input, ext, threshold):
+	inimg = spm.imread(path + input + ext)
 		
-	shape = imagem.shape
+	shape = inimg.shape
 	#imagemBin = []
 	#for l in range(shape[0]):
 	#	row = []
@@ -29,22 +30,18 @@ def binariza(input, threshold):
 	#				row.append( [255,255,255])
 	#	imagemBin.append(row)
 	
-	imagemBin = imagem
-	imagemBin[imagem <= threshold] = 0
-	imagemBin[imagem > threshold]	= 255
-	return imagemBin
+	outimg = inimg
+	outimg[inimg <= threshold] = 0
+	outimg[inimg > threshold]	= 255
+	
+	output = input + "_binar" + ".png"
+	
+	spm.imsave( pathnew + output, outimg)
+	return output
 
 
-imagem = path + 'lena.jpg'
-newimage = path + 'lena_bin.jpg'
-spm.imsave( newimage, binariza(imagem, 128))
-plt.imshow( spm.imread(newimage))
-plt.show()
-
-imagem = path + 'mandril.jpg'
-newimage = path + 'mandril_b2in.png'
-spm.imsave( newimage, binariza(imagem, 128))
-plt.imshow( spm.imread(newimage))
-plt.show()
+input = "lena"
+ext = ".png"
+print binariza(input, ext, 100)
 	
 
