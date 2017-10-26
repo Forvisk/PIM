@@ -32,7 +32,7 @@ def binariza( input, ext, threshold):
 	
 	outimg = inimg
 	outimg[inimg <= threshold] = 0
-	outimg[inimg > threshold]	= 255
+	outimg[inimg  > threshold] = 255
 	
 	output = input + "_binar" + ".png"
 	

@@ -22,7 +22,7 @@ def negativo( input, ext, hlp):
 			#row.append( [,,,])
 			if( len(shape) == 2):
 				color = abs(255 - inimg[l][c] + minPB)
-				row.append( [ color, color, color])
+				row.append( color)
 			if( len(shape) == 3):
 				r = abs(255 - inimg[l][c][0] + minR)
 				g = abs(255 - inimg[l][c][1] + minG)

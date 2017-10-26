@@ -23,7 +23,7 @@ def rgb_to_grey( input, ext):
 				pixelGray = resR + resG + resB
 				
 				#print count
-				row.append( [ pixelGray, pixelGray, pixelGray])
+				row.append( pixelGray)
 				#row.append(pixel)
 			outimg.append(row)
 	else:
@@ -33,7 +33,7 @@ def rgb_to_grey( input, ext):
 	scpm.imsave(pathnew + output, outimg)
 	return output
 	
-input = "monogatari timeline"
+input = "mandril"
 ext = ".jpg"
 print rgb_to_grey(input, ext)
 
