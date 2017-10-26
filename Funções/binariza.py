@@ -30,9 +30,9 @@ def binariza( input, ext, threshold):
 	#				row.append( [255,255,255])
 	#	imagemBin.append(row)
 	
-	outimg = inimg
-	outimg[inimg <= threshold] = 0
-	outimg[inimg  > threshold] = 255
+	outimg = inimg.convert('1')
+	#outimg[inimg <= threshold] = 0
+	#outimg[inimg  > threshold] = 255
 	
 	output = input + "_binar" + ".png"
 	
