@@ -6,8 +6,8 @@ mascaraPrewitt = 	[
 						[[ -1,  0,  1],
 						 [ -1,  0,  1],
 						 [ -1,  0,  1]],
-						[[ -1, -1, -1]
-						 [  0,  0,  0]
+						[[ -1, -1, -1],
+						 [  0,  0,  0],
 						 [  1,  1,  1]]
 					]
 					
@@ -15,8 +15,8 @@ mascaraSobel = 	[
 						[[ -1,  0,  1],
 						 [ -2,  0,  2],
 						 [ -1,  0,  1]],
-						[[ -1, -2, -1]
-						 [  0,  0,  0]
+						[[ -1, -2, -1],
+						 [  0,  0,  0],
 						 [  1,  2,  1]]
 					]
 
@@ -30,16 +30,16 @@ def detectaBorda( input, ext, p, mascara, Tresh, hlp):
 
 	outimg = []
 	if len(size) == 2:
-		outimg = unidim( inimg, mascara[0], Tresh, hlp)
+		outimg = unidim( inimg, size, mascara, Tresh, hlp)
 	if len(size) == 3:
-		outimg = rgbfim( inimg, mascara[0], Tresh, hlp)
+		outimg = rgbfim( inimg, size, mascara, Tresh, hlp)
 		
-	output = input + "_p1_retas" + hlp + ".png"
+	output = input + "_detecborda" + hlp + ".png"
 	scpm.imsave(pathtemp + output, outimg)
 	return output
 
 
-def unidim( inimg, mascara, Tresh, hlp):
+def unidim( inimg, size, mascara, Tresh, hlp):
 	print "gray scale"
 	outimg = []
 	
@@ -48,12 +48,17 @@ def unidim( inimg, mascara, Tresh, hlp):
 		
 		for j in range(0, size[1]):
 			pixel = 0
+			pixel0 = 0
+			pixel1 = 0
 			for i2 in range(-1,2):
 				if ( i+i2 in range(0,size[0])):
 					for j2 in range(-1,2):
 						if ( j+j2 in range(0, size[1])):
-							pixel += inimg[i + i2][j + j2]*mascara[1+i2][1+j2]
-			if( pixel > Tresh):
+							pixel0 += inimg[i + i2][j + j2]*mascara[0][1+i2][1+j2]
+							pixel1 += inimg[i + i2][j + j2]*mascara[1][1+i2][1+j2]
+			pixel = pixel0 + pixel1
+			print pixel
+			if( abs(pixel) > Tresh):
 				pixel = 255
 			else:
 				pixel = 0
@@ -62,21 +67,26 @@ def unidim( inimg, mascara, Tresh, hlp):
 	
 	return outimg
 
-def rgbfim( inimg, mascara, Tresh, hlp)
+def rgbfim( inimg, size, mascara, Tresh, hlp):
 	print "RGB"
 	outimg = []
 	
-		for i in range(0, size[0]):
+	for i in range(0, size[0]):
 		row = []
 		
 		for j in range(0, size[1]):
 			pixel = 0
+			pixel0 = 0
+			pixel1 = 0
 			for i2 in range(-1,2):
 				if ( i+i2 in range(0,size[0])):
 					for j2 in range(-1,2):
 						if ( j+j2 in range(0, size[1])):
-							pixel += inimg[i + i2][j + j2][0]*mascara[1+i2][1+j2]
-			if( pixel > Tresh):
+							pixel0 += inimg[i + i2][j + j2][0]*mascara[0][1+i2][1+j2]
+							pixel1 += inimg[i + i2][j + j2][1]*mascara[0][1+i2][1+j2]
+			pixel = pixel0 + pixel1
+			print pixel
+			if( abs(pixel) > Tresh):
 				pixel = 255
 			else:
 				pixel = 0
@@ -86,6 +96,6 @@ def rgbfim( inimg, mascara, Tresh, hlp)
 	return outimg
 
 
-input = "lena"
+input = "linhas_aa"
 ext = ".png"
-print detectaBorda( input, ext, path, mascaraPrewitt, 800, "00")
+print detectaBorda( input, ext, path, mascaraPrewitt, 160, "00")
