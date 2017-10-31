@@ -25,7 +25,7 @@ def mediana( input, ext):
 								#nelem += 1
 				#vetor.sort()
 				#pixel = vetor[ nelem/2 +1]
-				pixel = mediana( vetor)
+				pixel = medianap( vetor)
 				row.append( [ pixel, pixel, pixel])
 			outimg.append(row)
 		
@@ -53,16 +53,17 @@ def mediana( input, ext):
 				#pixelR = vetorR[ nelem/2 +1]
 				#pixelG = vetorG[ nelem/2 +1]
 				#pixelB = vetorB[ nelem/2 +1]
-				pixelR = mediana( vetorR)
-				pixelG = mediana( vetorG)
-				pixelB = mediana( vetorB)
+				pixelR = medianap( vetorR)
+				pixelG = medianap( vetorG)
+				pixelB = medianap( vetorB)
 				row.append( [ pixelR, pixelG, pixelB])
 				#row.append(pixel)
 			outimg.append(row)
 	output = input + "_mediana" + ".png"
 	scpm.imsave(pathnew + output, outimg)
+	return output
 
-def mediana( vetor):
+def medianap( vetor):
 	vetor.sort()
 	return vetor[len(vetor)/2+1]
 	
@@ -74,7 +75,9 @@ def mediana( vetor):
 #ext = ".png"
 #mediana(input, ext)
 
-input = "lena"
+
+
+input = "teste_11"
 ext = ".jpg"
-mediana(input, ext)
+print mediana(input, ext)
 
