@@ -85,7 +85,7 @@ def rgbfim( inimg, size, mascara, Tresh, hlp):
 							pixel0 += inimg[i + i2][j + j2][0]*mascara[0][1+i2][1+j2]
 							pixel1 += inimg[i + i2][j + j2][1]*mascara[0][1+i2][1+j2]
 			pixel = pixel0 + pixel1
-			print pixel
+			#print pixel
 			if( abs(pixel) > Tresh):
 				pixel = 255
 			else:
