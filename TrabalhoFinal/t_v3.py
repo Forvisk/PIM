@@ -148,6 +148,14 @@ def catchBorda( pat, inimg, ext, amostra):
 	if not ok:
 		return '-1'
 
+def distanciaEucl( p1, p2):
+	x1 = p1[0]
+	x2 = p2[0]
+	y1 = p1[1]
+	y2 = p2[1]
+	dist = math.sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2))
+	print dist
+
 def detectaBorda( pat, input):
 	print "Borda : " + pat + input
 	inimg = scpm.imread( pat + input)
@@ -164,6 +172,10 @@ def detectaBorda( pat, input):
 
 	borda = np.zeros( [M, N, 3] )
 	#borda = np.zeros( [M, N] )
+	for i in range(0, M):
+		for j in range(0,N):
+			if inimg[i][j] == 255:
+				borda[i][j] = [100,100,100]
 
 	while( ExtrW < MeioN and inimg[MeioM][ExtrW] == 0):
 		ExtrW += 1
@@ -172,7 +184,6 @@ def detectaBorda( pat, input):
 
 	while( ExtrE > MeioN and inimg[MeioM][ExtrE] == 0):
 		ExtrE -= 1
-
 	if( ExtrE != MeioN):
 		ok = True
 
@@ -187,11 +198,55 @@ def detectaBorda( pat, input):
 		ok = True
 
 	if ok:
+
+		print [ ExtrN, ExtrS, ExtrW, ExtrE]
+
+		for i in range( 0, abs( ExtrS - ExtrN)):
+			borda[ExtrN + i][MeioN] = [255,255,255]
+
+		for i in range( 0, abs( ExtrW - ExtrE)):
+			borda[MeioM][ExtrW+i] = [255,255,255]
+
 		for i in range(0, 7):
 			borda[MeioM][ExtrW+i] = [255,0,0]	#Vermelho
 			borda[MeioM][ExtrE-i] = [0,255,0]	#Verde
 			borda[ExtrN+i][MeioN] = [0,0,255]	#Azul
 			borda[ExtrS-i][MeioN] = [255,0,255]	#Magenta
+
+		change = True
+		it = 10
+		while( change and it > 0):
+			#	r**2 = x**2 + y**2	(circunferencia)
+			r1 = abs( ExtrS - ExtrN) / 2
+			r2 = abs( ExtrW - ExtrE) / 2
+			c1 = [ExtrN + r1, MeioN]
+			c2 = [MeioM, ExtrW + r2]
+			print ( r1, r2)
+			print (c1, c2)
+
+			for i in range(-2, 3):
+				borda[c1[0] +i][c1[1] +i][0] = 255
+				borda[c1[0] -i][c1[1] +i][0] = 255
+				borda[c2[0] +i][c2[1] +i][1] = 255
+				borda[c2[0] -i][c2[1] +i][1] = 255
+
+			NewMeioMrfN = c1[0]
+			NewExtrW = 0
+			while( ExtrW < MeioN and inimg[NewMeioMrfN][NewExtrW] == 0):
+				NewExtrW += 1
+			NewExtrE = N-1
+			while( NewExtrE > MeioN and inimg[NewMeioMrfN][NewExtrE] == 0):
+				NewExtrE -= 1
+
+			if( NewExtrE >= ExtrE) and ( NewExtrW <= ExtrW):
+				ExtrE = NewExtrE
+				ExtrW = NewExtrW
+				MeioM = NewMeioMrfN
+			else:
+				change = False
+
+			it -= 1
+
 
 
 
@@ -229,10 +284,10 @@ input = "placa_listra"
 ext = ".jpg"
 print roda( input, ext)
 
-input = "placa_pontos"
-ext = ".jpg"
-print roda( input, ext)
+#input = "placa_pontos"
+#ext = ".jpg"
+#print roda( input, ext)
 
-input = "placa_paint_2"
-ext = ".png"
-print roda( input, ext)
+#input = "placa_paint_2"
+#ext = ".png"
+#print roda( input, ext)
