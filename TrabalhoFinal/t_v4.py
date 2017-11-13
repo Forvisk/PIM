@@ -27,7 +27,7 @@ def getAmostra( pat, input, ext):
 	print "Amostra : " + pat + input + ext
 	inimg = scpm.imread( pat + input + ext)
 	size = inimg.shape
-
+	
 	arrayAmostra = getAmostraOutside( inimg, size[0], size[1])
 	amostra = -1
 	nAmostra = len(arrayAmostra)
