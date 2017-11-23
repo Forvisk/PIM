@@ -32,12 +32,13 @@ def rgb_to_grey( input, ext):
 	output = input + "_gray" + ".png"
 	scpm.imsave(pathnew + output, outimg)
 	return output
-	
+
+'''
 input = "placa_listra"
 ext = ".jpg"
 print rgb_to_grey(input, ext)
-	
-input = "placa_paint"
+'''
+input = "placa_paint_2"
 ext = ".png"
 print rgb_to_grey(input, ext)
 	

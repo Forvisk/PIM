@@ -9,7 +9,7 @@ pathnew = "imagens/aut/"
 def rgb_to_grey( input, ext):
 	inimg = scpm.imread(path + input + ext)
 	size = inimg.shape
-	
+	print size
 	outimg = []
 	
 	##Imagem RGB
@@ -30,6 +30,7 @@ def rgb_to_grey( input, ext):
 		print("Imagem ja em escala de cinza!")
 	
 	output = input + "_gray" + ".png"
+	print outimg
 	scpm.imsave(pathnew + output, outimg)
 	return output
 	
