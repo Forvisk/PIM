@@ -27,8 +27,8 @@ def getAmostra( pat, input, ext):
 	print "Amostra : " + pat + input + ext
 	inimg = scpm.imread( pat + input + ext)
 	size = inimg.shape
-	print inimg
-	print size
+	##print inimg
+	##print size
 	arrayAmostra = getAmostraOutside( inimg, size[0], size[1])
 	amostra = -1
 	nAmostra = len(arrayAmostra)
@@ -366,33 +366,27 @@ input = "placa_mancha"
 ext = ".jpg"
 print roda( input, ext)
 
-# placa_fungos.jpg possiu marcas de agua o que impossibilita a  utilizacao
-
-input = "placa_fungos"
-ext = ".jpg"
-print roda( input, ext)
-
 input = "placa_paint"
-ext = ".png"
+ext = ".jpg"
 print roda( input, ext)
 
 input = "placa_listra"
 ext = ".jpg"
 print roda( input, ext)
 
-#placa_pontos2.jpg nao funciona
-
+#placa_pontos2.jpg não funciona
+'''
 input = "placa_pontos2"
 ext = ".jpg"
 print roda( input, ext)
+'''
+input = "placa_ponto3"
+ext = ".jpeg"
+print roda( input, ext)
 
-#placa_pontos.jpg nao funciona
-
-input = "placa_pontos"
+#placa_fungos.jpg não funciona
+'''
+input = "placa_fungos"
 ext = ".jpg"
 print roda( input, ext)
-
-
-input = "placa_paint_2"
-ext = ".png"
-print roda( input, ext)
+'''
