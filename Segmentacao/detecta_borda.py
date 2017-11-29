@@ -95,7 +95,11 @@ def rgbfim( inimg, size, mascara, Tresh, hlp):
 	
 	return outimg
 
-
+'''
 input = "linhas_aa"
 ext = ".png"
 print detectaBorda( input, ext, path, mascaraPrewitt, 160, "00")
+'''
+input = "placa_listra"
+ext = '.jpg'
+print detectaBorda( input, ext, path, mascaraSobel, 160, "01")

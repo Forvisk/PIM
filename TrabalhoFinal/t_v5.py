@@ -56,7 +56,6 @@ def getAmostra( pat, input, ext):
 def catchBorda( pat, inimg, ext, amostra):
 	ok = False
 	_C = 20
-	_C2 = 5
 
 	print "Procura Borda : " + pat + input + ext
 	inimg = scpm.imread( pat + input + ext)
@@ -64,8 +63,6 @@ def catchBorda( pat, inimg, ext, amostra):
 
 	M = size[0]
 	N = size[1]
-
-	#borda = np.zeros( [M, N, 3] )
 	borda = np.zeros( [M, N] )
 
 	if len(size) == 3:
@@ -145,7 +142,7 @@ def catchBorda( pat, inimg, ext, amostra):
 						borda[i][j] = 255
 
 	if ok:
-		output = input + "_getBorda_v4"
+		output = input + "_p1_v5"
 		scpm.imsave(pathtemp + output + ".png", borda)
 		return output
 	if not ok:
@@ -165,7 +162,7 @@ def pontoMedio( p1, p2):
 	y = ( p1[1] + p2[1]) / 2
 	return [x,y]
 
-def detectaBorda( pat, input, ext):
+def detectaBorda( pat, input, ext, original):
 	print "Borda : " + pat + input + ext
 	inimg = scpm.imread( pat + input + ext)
 	size = inimg.shape
@@ -178,16 +175,6 @@ def detectaBorda( pat, input, ext):
 	ExtrS = M-1
 	ExtrW = 0
 	ExtrE = N-1
-
-	#borda = np.zeros( [M, N, 3] )
-	borda = np.zeros( [M, N] )
-	borda2 = np.zeros([M,N])
-	'''
-	for i in range(0, M):
-		for j in range(0,N):
-			if inimg[i][j] == 255:
-				borda[i][j] = [100,100,100]
-	'''
 
 	while( ExtrW < MeioN and inimg[MeioM][ExtrW] == 0):
 		ExtrW += 1
@@ -215,37 +202,10 @@ def detectaBorda( pat, input, ext):
 		it = 10
 		turn = True
 		while( change and it > 0):
-
-			#print [ ExtrN, ExtrS, ExtrW, ExtrE]
-			'''
-			for i in range( 0, abs( ExtrS - ExtrN)):
-				borda[ExtrN + i][MeioN] = [255,255,255]
-			
-			for i in range( 0, abs( ExtrW - ExtrE)):
-				borda[MeioM][ExtrW+i] = [255,255,255]
-
-			for i in range(0, 7):
-				borda[MeioM][ExtrW+i] = [255,0,0]	#Vermelho
-				borda[MeioM][ExtrE-i] = [0,255,0]	#Verde
-				borda[ExtrN+i][MeioN] = [0,0,255]	#Azul
-				borda[ExtrS-i][MeioN] = [255,0,255]	#Magenta
-			'''
-
-			#	r**2 = x**2 + y**2	(circunferencia)
 			r1 = abs( ExtrS - ExtrN) / 2
 			r2 = abs( ExtrW - ExtrE) / 2
 			c1 = [ExtrN + r1, MeioN]
 			c2 = [MeioM, ExtrW + r2]
-			#print ( r1, r2)
-			#print (c1, c2)
-
-			'''
-			for i in range(-2, 3):
-				borda[c1[0] +i][c1[1] +i][0] = 255
-				borda[c1[0] -i][c1[1] +i][0] = 255
-				borda[c2[0] +i][c2[1] +i][1] = 255
-				borda[c2[0] -i][c2[1] +i][1] = 255
-			'''
 
 			if turn:
 				turn = False
@@ -290,22 +250,6 @@ def detectaBorda( pat, input, ext):
 
 		centro 	= pontoMedio(c1, c2)
 
-		PNorte 	= [ centro[0] - r1, centro[1]]
-		PSul 	= [ centro[0] + r1, centro[1]]
-		PLeste	= [ centro[0], centro[1]+r2]
-		POeste 	= [ centro[0], centro[1]-r2]
-		
-		#print ( "Sul", PSul, "Norte", PNorte)
-		#print ( "Leste", PLeste, "Oeste", POeste)
-		#print centro
-
-		'''
-		for i in range(0,5):
-			borda[ PNorte[0]+i][ PNorte[1]] = [255,255,0]
-			borda[ PSul[0]-i][ PSul[1]] 	= [255,255,0]
-			borda[ PLeste[0]][ PLeste[1]-i] = [255,255,0]
-			borda[ POeste[0]][ POeste[1]+i] = [255,255,0]
-		'''
 		rangeBorda = 15*min(size[0], size[1]) / 700
 
 		ray = min( M-centro[0], N-centro[1])
@@ -327,44 +271,136 @@ def detectaBorda( pat, input, ext):
 				lastchange += 1
 			ray -= 1
 
+		#print ('Raio', thisray)
 
 
-		#print rangeBorda
-		r = min(r1,r2)
-		print ('fix ray', r)
-		print ('2o ray', thisray)
+
+		borda = np.zeros( [M, N] )
 		for i in range( 0, M):
 			for j in range( 0, N):
 				dist = distanciaEucl( centro, [i,j])
-				'''
-				if ( dist > r1-rangeBorda and dist < r1+rangeBorda) or ( dist > r2-rangeBorda and dist < r2+rangeBorda):
-					#borda[i,j] = [255,255,255]
-					borda[i,j] = 255
-				'''
-				#if( dist > r2-rangeBorda and dist < r1+rangeBorda):
-				if( dist > r2-rangeBorda):
-					borda[i,j] = 255
 				if( dist >= thisray):#-rangeBorda):
-					borda2[i,j] = 255
-		'''
-		for i in range(0,rangeBorda):
-			borda[ PNorte[0]+i][ PNorte[1]] = [255,255,0]
-			borda[ PSul[0]-i][ PSul[1]] 	= [255,255,0]
-			borda[ PLeste[0]][ PLeste[1]-i] = [255,255,0]
-			borda[ POeste[0]][ POeste[1]+i] = [255,255,0]
-		'''
-
-
+					borda[i,j] = 255
 
 	if ok:
-		output = input + "_borda2_v4"+ ".png"
-		scpm.imsave(pathtemp + output, borda2)
-
-		#output = input + "_borda_v4" + ".png"
-		#scpm.imsave(pathtemp + output, borda)
+		output = original + "_p2_v5"+ ".png"
+		scpm.imsave(pathtemp + output, borda)
 		return output
 	if not ok:
 		return '-1'
+
+def findColonia( pat, input, ext, borda):
+	print "Procura colonias: "+pat+input+ext
+	ok = True
+
+	inborda = scpm.imread(pathtemp+borda)
+	inimg = scpm.imread(pat + input + ext)
+	size = inimg.shape
+	M = size[0]
+	N = size[1]
+
+	Sobel = [	[[-1,-2,-1],[ 0, 0, 0],[ 1, 2, 1]],
+				[[-1, 0, 1],[-2, 0, 2],[-1, 0, 1]]]
+	'''
+	Prewitt = 	[	[[-1, 0, 1],[-1, 0, 1],[-1, 0, 1]],
+					[[-1,-1,-1],[ 0, 0, 0],[ 1, 1, 1]]]
+	'''
+
+	Kirsch = [	[[ 5,-3,-3],[ 5, 0,-3],[ 5,-3,-3]],
+				[[-3,-3,-3],[ 5, 0,-3],[ 5, 5,-3]],
+				[[-3,-3,-3],[-3, 0,-3],[ 5, 5, 5]],
+				[[-3,-3,-3],[-3, 0, 5],[-3, 5, 5]],
+				[[-3,-3, 5],[-3, 0, 5],[-3,-3, 5]],
+				[[-3, 5, 5],[-3, 0, 5],[-3,-3,-3]],
+				[[ 5, 5, 5],[-3, 0,-3],[-3,-3,-3]],
+				[[ 5, 5,-3],[ 5, 0,-3],[-3,-3,-3]]]
+
+	outSobel = np.zeros([M,N,3])
+	outKirsch = np.zeros([M,N,3])
+	#outPrewitt = np.zeros( [M,N,3])
+
+	for i in range(0,M):
+		for j in range(0,N):
+			if inborda[i][j] != 255:
+				pixSobel = [0,0]
+				pixSobel0 = [0,0]
+				pixSobel1 = [0,0]
+				pixSobel2 = [0,0]
+				'''
+				pixprewitt = [0,0]
+				pixprewitt0 = [0,0]
+				pixprewitt1 = [0,0]
+				pixprewitt2 = [0,0]
+				'''
+				pixKirsch = [0,0,0,0,0,0,0,0]
+				pixKirsch0 = [0,0,0,0,0,0,0,0]
+				pixKirsch1 = [0,0,0,0,0,0,0,0]
+				pixKirsch2 = [0,0,0,0,0,0,0,0]
+				for i2 in range(-1,2):
+					if ( i+i2 in range(0,size[0])):
+						for j2 in range(-1,2):
+							if ( j+j2 in range(0, size[1])):
+								for k in range(0,2):
+									pixSobel0[k] += inimg[i + i2][j + j2][0]*Sobel[k][1+i2][1+j2]
+									pixSobel1[k] += inimg[i + i2][j + j2][1]*Sobel[k][1+i2][1+j2]
+									pixSobel2[k] += inimg[i + i2][j + j2][2]*Sobel[k][1+i2][1+j2]
+									pixSobel[k] = pixSobel0[k] + pixSobel1[k] + pixSobel2[k]
+
+								'''
+								for k in range(0,2):
+									pixprewitt0[k] += inimg[i + i2][j + j2][0]*Prewitt[k][1+i2][1+j2]
+									pixprewitt1[k] += inimg[i + i2][j + j2][1]*Prewitt[k][1+i2][1+j2]
+									pixprewitt2[k] += inimg[i + i2][j + j2][2]*Prewitt[k][1+i2][1+j2]
+								'''
+								for k in range(0,8):
+									pixKirsch0[k] += inimg[i + i2][j + j2][0]*Kirsch[k][1+i2][1+j2]
+									pixKirsch1[k] += inimg[i + i2][j + j2][1]*Kirsch[k][1+i2][1+j2]
+									pixKirsch2[k] += inimg[i + i2][j + j2][2]*Kirsch[k][1+i2][1+j2]
+									pixKirsch[k] = pixKirsch0[k] + pixKirsch1[k] + pixKirsch2[k]
+									#print [k, i, j, pixKirsch0[k], pixKirsch1[k],pixKirsch2[k]]
+
+				#for k in range(0,2):
+				#	pixSobel[k] = pixSobel0[k] + pixSobel1[k] + pixSobel2[k]
+				'''
+				for k in range(0,2):
+					pixprewitt[k] = pixprewitt0[k] + pixprewitt1[k] + pixprewitt2[k]
+				'''
+				thold = 250
+				if( (abs(pixSobel[0]) > thold) or (abs(pixSobel[1]) > thold)):
+					outSobel[i][j] = [100,100,0]
+				else:
+					outSobel[i][j] = [0,0,0]
+				'''
+				if( (abs(pixprewitt[0]) > 200) or (abs(pixprewitt[1]) > 200)):
+					outPrewitt[i][j] = [100,100,0]
+				else:
+					outPrewitt[i][j] = [0,0,0]
+				'''
+				#for k in range(0,8):
+				#	pixKirsch[k] = pixKirsch0[k] + pixKirsch1[k] + pixKirsch2[k]
+
+				#print pixKirsch
+				thold = 400
+				if( (abs(pixKirsch[0]) > thold) or (abs(pixKirsch[1]) > thold) or (abs(pixKirsch[2]) > thold) or (abs(pixKirsch[3]) > thold) or 
+					(abs(pixKirsch[4]) > thold) or (abs(pixKirsch[5]) > thold) or (abs(pixKirsch[6]) > thold) or (abs(pixKirsch[7]) > thold)):
+					outKirsch[i][j] = [100,255,0]
+				else:
+					outKirsch[i][j] = [0,0,0]
+			else:
+				outSobel[i][j] = [255,255,255]
+				outKirsch[i][j] = [255,255,255]
+				#outPrewitt[i][j] = [255,255,255]
+
+	if ok:
+		output = input + "_p3_v5"
+		scpm.imsave( pathtemp+output+"_sobel_.png", outSobel)
+		#scpm.imsave( pathtemp+output+"_prewitt.png", outPrewitt)
+		scpm.imsave( pathtemp+output+"_Kirsch_.png", outKirsch)
+		return output
+	else:
+		return '-1'
+
+
 
 
 def roda( input, ext):
@@ -372,17 +408,20 @@ def roda( input, ext):
 	if amostra == -1:
 		return "ERRO"
 	#else:	return amostra
-	print amostra
+	print ('Amostra recebida: ',amostra)
 	borda = catchBorda( path, input, ext, amostra)
 	if borda == '-1':
 		return "ERRO"
 	#else: return borda
 	print borda
 	ext2 = ".png"
-	borda = detectaBorda( pathtemp, borda, ext2)
+	borda = detectaBorda( pathtemp, borda, ext2, input)
 	if borda == '-1':
 		return "ERRO"
 	#else: return borda
+	colonias = findColonia( path, input, ext, borda)
+	if colonias == '-1':
+		return "ERRO"
 
 	original = scpm.imread(path+input+ext)
 	alt = scpm.imread(pathtemp+borda)
@@ -392,8 +431,9 @@ def roda( input, ext):
 			#if alt[i][j][0] != 0 and alt[i][j][1] != 0 and alt[i][j][2] != 0 :
 			if alt[i][j] != 0 :
 				original[i][j] = [alt[i][j],alt[i][j],alt[i][j]]
-	scpm.imsave(pathtemp+input+"_resp_v4"+".png", original)
-	return input+"_resp_v4"+".png"
+	output = input + "_r_v5.png"
+	scpm.imsave(pathtemp+output, original)
+	return output
 
 
 
