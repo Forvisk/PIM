@@ -2,6 +2,7 @@ import numpy as np
 import scipy.misc as scpm
 import matplotlib.pyplot as plt
 import math
+from PIL import Image
 
 path = "imagens/"
 pathnew = "imagens/aut/"
@@ -299,8 +300,10 @@ def findColonia( pat, input, ext, borda):
 	M = size[0]
 	N = size[1]
 
+	'''
 	Sobel = [	[[-1,-2,-1],[ 0, 0, 0],[ 1, 2, 1]],
 				[[-1, 0, 1],[-2, 0, 2],[-1, 0, 1]]]
+	'''
 	'''
 	Prewitt = 	[	[[-1, 0, 1],[-1, 0, 1],[-1, 0, 1]],
 					[[-1,-1,-1],[ 0, 0, 0],[ 1, 1, 1]]]
@@ -315,17 +318,20 @@ def findColonia( pat, input, ext, borda):
 				[[ 5, 5, 5],[-3, 0,-3],[-3,-3,-3]],
 				[[ 5, 5,-3],[ 5, 0,-3],[-3,-3,-3]]]
 
-	outSobel = np.zeros([M,N,3])
-	outKirsch = np.zeros([M,N,3])
+	#outSobel = np.zeros([M,N,3])
+	#outKirsch = np.zeros([M,N,3])
+	outKirsch = np.zeros([M,N])
 	#outPrewitt = np.zeros( [M,N,3])
 
 	for i in range(0,M):
 		for j in range(0,N):
 			if inborda[i][j] != 255:
+				'''
 				pixSobel = [0,0]
 				pixSobel0 = [0,0]
 				pixSobel1 = [0,0]
 				pixSobel2 = [0,0]
+				'''
 				'''
 				pixprewitt = [0,0]
 				pixprewitt0 = [0,0]
@@ -340,11 +346,13 @@ def findColonia( pat, input, ext, borda):
 					if ( i+i2 in range(0,size[0])):
 						for j2 in range(-1,2):
 							if ( j+j2 in range(0, size[1])):
+								'''
 								for k in range(0,2):
 									pixSobel0[k] += inimg[i + i2][j + j2][0]*Sobel[k][1+i2][1+j2]
 									pixSobel1[k] += inimg[i + i2][j + j2][1]*Sobel[k][1+i2][1+j2]
 									pixSobel2[k] += inimg[i + i2][j + j2][2]*Sobel[k][1+i2][1+j2]
 									pixSobel[k] = pixSobel0[k] + pixSobel1[k] + pixSobel2[k]
+								'''
 
 								'''
 								for k in range(0,2):
@@ -365,11 +373,13 @@ def findColonia( pat, input, ext, borda):
 				for k in range(0,2):
 					pixprewitt[k] = pixprewitt0[k] + pixprewitt1[k] + pixprewitt2[k]
 				'''
-				thold = 250
+				'''
+				thold = 400
 				if( (abs(pixSobel[0]) > thold) or (abs(pixSobel[1]) > thold)):
 					outSobel[i][j] = [100,100,0]
 				else:
 					outSobel[i][j] = [0,0,0]
+				'''
 				'''
 				if( (abs(pixprewitt[0]) > 200) or (abs(pixprewitt[1]) > 200)):
 					outPrewitt[i][j] = [100,100,0]
@@ -380,27 +390,105 @@ def findColonia( pat, input, ext, borda):
 				#	pixKirsch[k] = pixKirsch0[k] + pixKirsch1[k] + pixKirsch2[k]
 
 				#print pixKirsch
-				thold = 400
+				thold = 700
 				if( (abs(pixKirsch[0]) > thold) or (abs(pixKirsch[1]) > thold) or (abs(pixKirsch[2]) > thold) or (abs(pixKirsch[3]) > thold) or 
 					(abs(pixKirsch[4]) > thold) or (abs(pixKirsch[5]) > thold) or (abs(pixKirsch[6]) > thold) or (abs(pixKirsch[7]) > thold)):
-					outKirsch[i][j] = [100,255,0]
+					#outKirsch[i][j] = [100,255,0]
+					outKirsch[i][j] = 100
 				else:
-					outKirsch[i][j] = [0,0,0]
+					#outKirsch[i][j] = [0,0,0]
+					outKirsch[i][j] = 0
 			else:
-				outSobel[i][j] = [255,255,255]
-				outKirsch[i][j] = [255,255,255]
+				#outSobel[i][j] = [255,255,255]
+				#outKirsch[i][j] = [255,255,255]
+				outKirsch[i][j] = 255
 				#outPrewitt[i][j] = [255,255,255]
 
 	if ok:
-		output = input + "_p3_v5"
-		scpm.imsave( pathtemp+output+"_sobel_.png", outSobel)
+		output = input + "_p3_v5.png"
+		#scpm.imsave( pathtemp+output+"_sobel_.png", outSobel)
 		#scpm.imsave( pathtemp+output+"_prewitt.png", outPrewitt)
-		scpm.imsave( pathtemp+output+"_Kirsch_.png", outKirsch)
+		scpm.imsave( pathtemp+output, outKirsch)
 		return output
 	else:
 		return '-1'
 
 
+def unionBorda( pat, input, original, ext):
+	inimg = scpm.imread( pat+input)
+	outimg = scpm.imread( path + original + ext)
+
+	size = inimg.shape
+	M = size[0]
+	N = size[1]
+
+	for i in range( 0, M):
+		for j in range( 0, N):
+			if inimg[i][j] == 100:
+				outimg[i][j] = [255,255,0]
+
+	output = original+"_p4_v5.png"
+	scpm.imsave( pathtemp+output, outimg)
+	return output
+	
+
+def ErosaoDescricao( inimg):
+	size = inimg.shape
+	conjunto = []
+
+	for i in range(size[0]):
+		for j in range( size[1]):
+			if inimg[i][j] == 100:
+				conjunto.append((j,i))
+	return conjunto
+
+def Erode( conjunto):
+	elemento = [	(-1,-1),(-1, 0),(-1, 1),
+					( 0,-1),( 0, 0),( 0, 1),
+					( 1,-1),( 1,-1),( 1, 1)]
+
+	etapas = []
+	for elem in elemento:
+		etapa = []
+		for val in conjunto:
+			temp = ( val[0] - elem[0], val[1] - elem[1])
+			etapa.append(temp)
+		etapas.append(etapa)
+	
+	result = []
+	for val in etapas[0]:
+		insere = True
+		for index in range(len(etapas)):
+			if val not in etapas[index]:
+				insere = False
+		if insere:
+			result.append(val)
+	
+	return result
+
+def geraImgagem( conjunto, inimg):
+	size = inimg.shape
+	outimg = np.zeros( size)
+	for val in conjunto:
+		outimg[val[1]][val[0]] = 0
+
+	for i in range( size[0]):
+		for j in range( size[1]):
+			if inimg[i][j] == 255:
+				outimg[i][j] = 255
+
+	return outimg
+
+def Erosao( pat, input):
+	inimg = np.array( Image.open(pat+input).convert('L'))
+	conjunto = ErosaoDescricao( inimg)
+	
+	resultado = Erode( conjunto)
+	outimg = geraImgagem( resultado, inimg)
+	
+	output = input + "_p4_erosao.png"
+	scpm.imsave(pathtemp + output, outimg)
+	return output
 
 
 def roda( input, ext):
@@ -422,6 +510,12 @@ def roda( input, ext):
 	colonias = findColonia( path, input, ext, borda)
 	if colonias == '-1':
 		return "ERRO"
+	print colonias
+
+	#erodido = Erosao( pathtemp, colonias)
+	#print erodido
+	uniao = unionBorda( pathtemp, colonias, input, ext)
+	print uniao
 
 	original = scpm.imread(path+input+ext)
 	alt = scpm.imread(pathtemp+borda)
@@ -436,11 +530,20 @@ def roda( input, ext):
 	return output
 
 
+'''
+O que fazer agora
+
+	conseguir colorir a parte interna das bordas para depois usar 
+	a fonte interpolacao.py na pasta Funções para ler os compoentes conexos da imagem
+
+	assim teremos o numero de colonias
+'''
+
 
 input = "placa_mancha"
 ext = ".jpg"
 print roda( input, ext)
-
+print '\n'
 '''
 input = "placa_paint"
 ext = ".jpg"
@@ -450,6 +553,7 @@ print roda( input, ext)
 input = "placa_listra"
 ext = ".jpg"
 print roda( input, ext)
+print '\n'
 
 #placa_pontos2.jpg nao funciona
 '''
@@ -460,7 +564,7 @@ print roda( input, ext)
 input = "placa_ponto3"
 ext = ".jpeg"
 print roda( input, ext)
-
+print '\n'
 #placa_fungos.jpg nao funciona
 '''
 input = "placa_fungos"
