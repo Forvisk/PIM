@@ -2,7 +2,7 @@ import numpy as np
 import scipy.misc as scpm
 import matplotlib.pyplot as plt
 import math
-from PIL import Image
+from random import randint
 
 path = "imagens/"
 pathnew = "imagens/aut/"
@@ -69,6 +69,10 @@ def catchBorda( pat, inimg, ext, amostra):
 	if len(size) == 3:
 		ok = True
 
+		# Ja calculado
+		output = input + "_p1_v6"
+		return output
+
 		for i in range( 0, M):
 			count = _C
 			for j in range(0, N):
@@ -110,6 +114,10 @@ def catchBorda( pat, inimg, ext, amostra):
 
 	if len(size) == 1:
 		ok = True
+
+		#Ja calculado
+		output = input + "_p1_v5"
+		return output
 		
 		for i in range( 0, M):
 			count = _C
@@ -143,7 +151,7 @@ def catchBorda( pat, inimg, ext, amostra):
 						borda[i][j] = 255
 
 	if ok:
-		output = input + "_p1_v5"
+		output = input + "_p1_v6"
 		scpm.imsave(pathtemp + output + ".png", borda)
 		return output
 	if not ok:
@@ -198,6 +206,10 @@ def detectaBorda( pat, input, ext, original):
 		ok = True
 
 	if ok:
+
+		#Ja calcualdo
+		output = original + "_p2_v6"+ ".png"
+		return output
 
 		change = True
 		it = 10
@@ -284,7 +296,7 @@ def detectaBorda( pat, input, ext, original):
 					borda[i,j] = 255
 
 	if ok:
-		output = original + "_p2_v5"+ ".png"
+		output = original + "_p2_v6"+ ".png"
 		scpm.imsave(pathtemp + output, borda)
 		return output
 	if not ok:
@@ -294,20 +306,15 @@ def findColonia( pat, input, ext, borda):
 	print "Procura colonias: "+pat+input+ext
 	ok = True
 
+	# Ja calculado
+	output = input + "_p3_v6.png"
+	return output
+
 	inborda = scpm.imread(pathtemp+borda)
 	inimg = scpm.imread(pat + input + ext)
 	size = inimg.shape
 	M = size[0]
 	N = size[1]
-
-	'''
-	Sobel = [	[[-1,-2,-1],[ 0, 0, 0],[ 1, 2, 1]],
-				[[-1, 0, 1],[-2, 0, 2],[-1, 0, 1]]]
-	'''
-	'''
-	Prewitt = 	[	[[-1, 0, 1],[-1, 0, 1],[-1, 0, 1]],
-					[[-1,-1,-1],[ 0, 0, 0],[ 1, 1, 1]]]
-	'''
 
 	Kirsch = [	[[ 5,-3,-3],[ 5, 0,-3],[ 5,-3,-3]],
 				[[-3,-3,-3],[ 5, 0,-3],[ 5, 5,-3]],
@@ -318,26 +325,12 @@ def findColonia( pat, input, ext, borda):
 				[[ 5, 5, 5],[-3, 0,-3],[-3,-3,-3]],
 				[[ 5, 5,-3],[ 5, 0,-3],[-3,-3,-3]]]
 
-	#outSobel = np.zeros([M,N,3])
-	#outKirsch = np.zeros([M,N,3])
 	outKirsch = np.zeros([M,N])
-	#outPrewitt = np.zeros( [M,N,3])
 
 	for i in range(0,M):
 		for j in range(0,N):
 			if inborda[i][j] != 255:
-				'''
-				pixSobel = [0,0]
-				pixSobel0 = [0,0]
-				pixSobel1 = [0,0]
-				pixSobel2 = [0,0]
-				'''
-				'''
-				pixprewitt = [0,0]
-				pixprewitt0 = [0,0]
-				pixprewitt1 = [0,0]
-				pixprewitt2 = [0,0]
-				'''
+
 				pixKirsch = [0,0,0,0,0,0,0,0]
 				pixKirsch0 = [0,0,0,0,0,0,0,0]
 				pixKirsch1 = [0,0,0,0,0,0,0,0]
@@ -346,50 +339,14 @@ def findColonia( pat, input, ext, borda):
 					if ( i+i2 in range(0,size[0])):
 						for j2 in range(-1,2):
 							if ( j+j2 in range(0, size[1])):
-								'''
-								for k in range(0,2):
-									pixSobel0[k] += inimg[i + i2][j + j2][0]*Sobel[k][1+i2][1+j2]
-									pixSobel1[k] += inimg[i + i2][j + j2][1]*Sobel[k][1+i2][1+j2]
-									pixSobel2[k] += inimg[i + i2][j + j2][2]*Sobel[k][1+i2][1+j2]
-									pixSobel[k] = pixSobel0[k] + pixSobel1[k] + pixSobel2[k]
-								'''
 
-								'''
-								for k in range(0,2):
-									pixprewitt0[k] += inimg[i + i2][j + j2][0]*Prewitt[k][1+i2][1+j2]
-									pixprewitt1[k] += inimg[i + i2][j + j2][1]*Prewitt[k][1+i2][1+j2]
-									pixprewitt2[k] += inimg[i + i2][j + j2][2]*Prewitt[k][1+i2][1+j2]
-								'''
 								for k in range(0,8):
 									pixKirsch0[k] += inimg[i + i2][j + j2][0]*Kirsch[k][1+i2][1+j2]
 									pixKirsch1[k] += inimg[i + i2][j + j2][1]*Kirsch[k][1+i2][1+j2]
 									pixKirsch2[k] += inimg[i + i2][j + j2][2]*Kirsch[k][1+i2][1+j2]
 									pixKirsch[k] = pixKirsch0[k] + pixKirsch1[k] + pixKirsch2[k]
-									#print [k, i, j, pixKirsch0[k], pixKirsch1[k],pixKirsch2[k]]
 
-				#for k in range(0,2):
-				#	pixSobel[k] = pixSobel0[k] + pixSobel1[k] + pixSobel2[k]
-				'''
-				for k in range(0,2):
-					pixprewitt[k] = pixprewitt0[k] + pixprewitt1[k] + pixprewitt2[k]
-				'''
-				'''
-				thold = 400
-				if( (abs(pixSobel[0]) > thold) or (abs(pixSobel[1]) > thold)):
-					outSobel[i][j] = [100,100,0]
-				else:
-					outSobel[i][j] = [0,0,0]
-				'''
-				'''
-				if( (abs(pixprewitt[0]) > 200) or (abs(pixprewitt[1]) > 200)):
-					outPrewitt[i][j] = [100,100,0]
-				else:
-					outPrewitt[i][j] = [0,0,0]
-				'''
-				#for k in range(0,8):
-				#	pixKirsch[k] = pixKirsch0[k] + pixKirsch1[k] + pixKirsch2[k]
 
-				#print pixKirsch
 				thold = 700
 				if( (abs(pixKirsch[0]) > thold) or (abs(pixKirsch[1]) > thold) or (abs(pixKirsch[2]) > thold) or (abs(pixKirsch[3]) > thold) or 
 					(abs(pixKirsch[4]) > thold) or (abs(pixKirsch[5]) > thold) or (abs(pixKirsch[6]) > thold) or (abs(pixKirsch[7]) > thold)):
@@ -399,20 +356,15 @@ def findColonia( pat, input, ext, borda):
 					#outKirsch[i][j] = [0,0,0]
 					outKirsch[i][j] = 0
 			else:
-				#outSobel[i][j] = [255,255,255]
 				#outKirsch[i][j] = [255,255,255]
 				outKirsch[i][j] = 255
-				#outPrewitt[i][j] = [255,255,255]
 
 	if ok:
-		output = input + "_p3_v5.png"
-		#scpm.imsave( pathtemp+output+"_sobel_.png", outSobel)
-		#scpm.imsave( pathtemp+output+"_prewitt.png", outPrewitt)
+		output = input + "_p3_v6.png"
 		scpm.imsave( pathtemp+output, outKirsch)
 		return output
 	else:
 		return '-1'
-
 
 def unionBorda( pat, input, original, ext):
 	inimg = scpm.imread( pat+input)
@@ -427,68 +379,155 @@ def unionBorda( pat, input, original, ext):
 			if inimg[i][j] == 100:
 				outimg[i][j] = [255,255,0]
 
-	output = original+"_p4_v5.png"
+	output = original+"_pF_v6.png"
 	scpm.imsave( pathtemp+output, outimg)
 	return output
-	
 
-def ErosaoDescricao( inimg):
+def teste(pat, input, original):
+	inimg = scpm.imread( pat+input)
+	output = original + '_p4_v6.png'
+
+	outBorda = 255
+	borda = 100
+
+	listaInterna = []
+
 	size = inimg.shape
-	conjunto = []
+	M = size[0]
+	N = size[1]
 
-	for i in range(size[0]):
-		for j in range( size[1]):
-			if inimg[i][j] == 100:
-				conjunto.append((j,i))
-	return conjunto
+	miolo = False
+	lastMiolo = False
 
-def Erode( conjunto):
-	elemento = [	(-1,-1),(-1, 0),(-1, 1),
-					( 0,-1),( 0, 0),( 0, 1),
-					( 1,-1),( 1,-1),( 1, 1)]
+	for i in range(0,M):
+		for j in range( 0, N):
+			if inimg[i][j] == outBorda:
+				pass
+			'''
+			if inimg[i][j] == borda:
+				if inimg[i][j-1] == 0:
+					miolo = False
+				else:
+					if inimg[i][j+1] == 0:
+						miolo = True
+			'''
+			if inimg[i][j] == borda:
+				if inimg[i][j+1] == 0:
+					miolo = not(miolo)
 
-	etapas = []
-	for elem in elemento:
-		etapa = []
-		for val in conjunto:
-			temp = ( val[0] - elem[0], val[1] - elem[1])
-			etapa.append(temp)
-		etapas.append(etapa)
+			if (inimg[i][j] != outBorda and inimg[i][j] != borda) and miolo:
+				listaInterna.append([i,j])
+
+	outimg = inimg
+	for k in range( len(listaInterna)):
+		outimg[listaInterna[k][0]][listaInterna[k][1]] = 150
+
 	
-	result = []
-	for val in etapas[0]:
-		insere = True
-		for index in range(len(etapas)):
-			if val not in etapas[index]:
-				insere = False
-		if insere:
-			result.append(val)
-	
-	return result
 
-def geraImgagem( conjunto, inimg):
-	size = inimg.shape
-	outimg = np.zeros( size)
-	for val in conjunto:
-		outimg[val[1]][val[0]] = 0
-
-	for i in range( size[0]):
-		for j in range( size[1]):
-			if inimg[i][j] == 255:
-				outimg[i][j] = 255
-
-	return outimg
-
-def Erosao( pat, input):
-	inimg = np.array( Image.open(pat+input).convert('L'))
-	conjunto = ErosaoDescricao( inimg)
-	
-	resultado = Erode( conjunto)
-	outimg = geraImgagem( resultado, inimg)
-	
-	output = input + "_p4_erosao.png"
-	scpm.imsave(pathtemp + output, outimg)
+	scpm.imsave(pathtemp+output, outimg)
 	return output
+
+def conect( pat, inimg, original):
+	inimg = scpm.imread( pat+inimg)
+	size = inimg.shape
+
+	M = size[0]
+	N = size[1]
+
+
+	xI = randint(0, M)
+	xJ = randint(0,N)
+	while( inimg[xI][xJ] != 0):
+		xI = randint(0, M)
+		xJ = randint(0,N)
+
+	print "ponto inicial"
+	print [xI, xJ]
+	newLista = listaConectos( inimg, xI,xJ)
+	output = original + "_p5_v6.png"
+	outimg = inimg
+	outimg[xI][xJ] = 200
+	for k in range( len(newLista)):
+		outimg[newLista[k][0]][newLista[k][1]] = 150
+
+	scpm.imsave(pathtemp+output, outimg)
+	return output
+
+def listaConectos( inimg, iniI, iniJ):
+	lista = []
+
+	size = inimg.shape
+	M = size[0]
+	N = size[1]
+
+	conecto = np.zeros([M,N])
+	conecto[iniI][iniJ] == 1
+
+	maxDist = min(M, N)
+	print size
+
+	for d in range(1,maxDist):
+		'''
+		X o o o o
+		X o o o o
+		X o C o o
+		X o o o o
+		o o o o o
+		'''
+		if( iniJ-d in range(0,N)):
+			for k in range(iniI-d, iniI+d):
+				if ( iniI + k in range(0,M)):
+					if inimg[iniI+k][iniJ-d] == 0:
+						print 'algo'
+
+		'''
+		o o o o o
+		o o o o X
+		o o C o X
+		o o o o X
+		o o o o X
+		'''
+		if( iniJ+d in range(0,N)):
+			for k in range( iniI+d , iniI-d, -1):
+				if ( iniI + k in range(0,M)):
+					if inimg[iniI+k][iniJ+d] == 0:
+						print 'algo'
+
+
+
+	for i in range(0,M):
+		for j in range(0,N):
+			if conecto[i][j] == 1:
+				lista.append([i,j])
+
+	return lista
+
+
+
+def bordaInterna( pat, input):
+	inimg = scpm.imread( pat+input)
+
+	outBorda = 255
+	borda = 100
+
+	listaInteran = ()
+
+	size = inimg.shape
+	M = size[0]
+	N = size[1]
+
+	count = M*N/2
+	while count > 0:
+		count -= 1
+		ranI = randint(0, M-1)
+		ranJ = randint(0, N-1)
+		if( inimg[ranI][ranJ] == 0):
+			print "tete"
+			
+
+def bordaInterna_2( inimg, iniI, iniJ):
+	print "tste"
+
 
 
 def roda( input, ext):
@@ -511,9 +550,13 @@ def roda( input, ext):
 	if colonias == '-1':
 		return "ERRO"
 	print colonias
+	#bordaInterna(pathtemp, colonias)
+	meio = teste(pathtemp, colonias, input)
+	print meio
 
-	#erodido = Erosao( pathtemp, colonias)
-	#print erodido
+	conecto = conect(pathtemp, colonias,input)
+	print conecto
+
 	uniao = unionBorda( pathtemp, colonias, input, ext)
 	print uniao
 
@@ -525,7 +568,7 @@ def roda( input, ext):
 			#if alt[i][j][0] != 0 and alt[i][j][1] != 0 and alt[i][j][2] != 0 :
 			if alt[i][j] != 0 :
 				original[i][j] = [alt[i][j],alt[i][j],alt[i][j]]
-	output = input + "_r_v5.png"
+	output = input + "_r_v6.png"
 	scpm.imsave(pathtemp+output, original)
 	return output
 
@@ -534,8 +577,7 @@ def roda( input, ext):
 O que fazer agora
 
 	conseguir colorir a parte interna das bordas para depois usar 
-	a fonte interpolacao.py na pasta Funções para ler os compoentes conexos da imagem
-
+	a fonte interpolacao.py na pasta Funcoes para ler os compoentes conexos da imagem
 	assim teremos o numero de colonias
 '''
 
