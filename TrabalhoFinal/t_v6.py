@@ -208,8 +208,8 @@ def detectaBorda( pat, input, ext, original):
 	if ok:
 
 		#Ja calcualdo
-		output = original + "_p2_v6"+ ".png"
-		return output
+		#output = original + "_p2_v6"+ ".png"
+		#return output
 
 		change = True
 		it = 10
@@ -284,8 +284,8 @@ def detectaBorda( pat, input, ext, original):
 				lastchange += 1
 			ray -= 1
 
-		#print ('Raio', thisray)
-
+		#print ('Raio: ', thisray)
+		#print ('Centro: ', centro)
 
 
 		borda = np.zeros( [M, N] )
@@ -295,10 +295,12 @@ def detectaBorda( pat, input, ext, original):
 				if( dist >= thisray):#-rangeBorda):
 					borda[i,j] = 255
 
+
+
 	if ok:
 		output = original + "_p2_v6"+ ".png"
 		scpm.imsave(pathtemp + output, borda)
-		return output
+		return [output, centro, thisray]
 	if not ok:
 		return '-1'
 
@@ -383,7 +385,7 @@ def unionBorda( pat, input, original, ext):
 	scpm.imsave( pathtemp+output, outimg)
 	return output
 
-def teste(pat, input, original):
+def teste_interno(pat, input, original):
 	inimg = scpm.imread( pat+input)
 	output = original + '_p4_v6.png'
 
@@ -443,17 +445,48 @@ def conect( pat, inimg, original):
 
 	print "ponto inicial"
 	print [xI, xJ]
-	newLista = listaConectos( inimg, xI,xJ)
-	output = original + "_p5_v6.png"
-	outimg = inimg
+
+	lista = rangeDistancia( inimg, xI,xJ)
+	#print lista
+
+	output = original + "_p5_1_v6.png"
+	outimg = np.zeros([M,N])
+	for i in range(0,M):
+		for j in range(0,N):
+			outimg[i][j] = inimg[i][j]
 	outimg[xI][xJ] = 200
-	for k in range( len(newLista)):
-		outimg[newLista[k][0]][newLista[k][1]] = 150
+	for k in range( len(lista)):
+		outimg[lista[k][0]][lista[k][1]] = 150
 
 	scpm.imsave(pathtemp+output, outimg)
+
+	xI = randint(0, M)
+	xJ = randint(0,N)
+	while( inimg[xI][xJ] != 0):
+		xI = randint(0, M)
+		xJ = randint(0,N)
+
+	print "ponto inicial2"
+	print [xI, xJ]
+
+	lista = rangeDistancia( inimg, xI,xJ)
+	#print lista
+
+	output = original + "_p5_2_v6.png"
+	outimg = np.zeros([M,N])
+	for i in range(0,M):
+		for j in range(0,N):
+			outimg[i][j] = inimg[i][j]
+	outimg[xI][xJ] = 200
+	for k in range( len(lista)):
+		outimg[lista[k][0]][lista[k][1]] = 150
+
+	scpm.imsave(pathtemp+output, outimg)
+
+	output = original + "_p5_v6.png"
 	return output
 
-def listaConectos( inimg, iniI, iniJ):
+def rangeDistancia( inimg, iniI, iniJ):
 	lista = []
 
 	size = inimg.shape
@@ -461,38 +494,62 @@ def listaConectos( inimg, iniI, iniJ):
 	N = size[1]
 
 	conecto = np.zeros([M,N])
-	conecto[iniI][iniJ] == 1
+	conecto[iniI][iniJ] = 1
 
 	maxDist = min(M, N)
-	print size
+	#print size
+
+	#print ["ini", (iniI,iniJ)]
 
 	for d in range(1,maxDist):
+		#print d
 		'''
-		X o o o o
-		X o o o o
-		X o C o o
-		X o o o o
-		o o o o o
+		X o o
+		v C o
+		o o o
 		'''
-		if( iniJ-d in range(0,N)):
-			for k in range(iniI-d, iniI+d):
-				if ( iniI + k in range(0,M)):
-					if inimg[iniI+k][iniJ-d] == 0:
-						print 'algo'
+		for k in range(-d, d+1):
+			if (iniJ-d in range(0,N)) and ( iniI+k in range(0,M)):
+				if inimg[iniI+k][iniJ-d] == 0:
+					if verificaVizinhanca( iniI+k, iniJ-d, conecto) == 1:
+						conecto[iniI+k][iniJ-d] = 1
+						#print [iniI+k, iniJ-d]
 
 		'''
-		o o o o o
-		o o o o X
-		o o C o X
-		o o o o X
-		o o o o X
+		o < x
+		o C o
+		o o o
 		'''
-		if( iniJ+d in range(0,N)):
-			for k in range( iniI+d , iniI-d, -1):
-				if ( iniI + k in range(0,M)):
-					if inimg[iniI+k][iniJ+d] == 0:
-						print 'algo'
+		for k in range(-d, d+1):
+			if (iniI-d in range(0,M))  and ( iniJ+k in range(0,N)):
+				if inimg[iniI-d][iniJ+k] == 0:
+					if verificaVizinhanca( iniI-d, iniJ+k, conecto) == 1:
+						conecto[iniI-d][iniJ+k] = 1
+						#print [iniI+k, iniJ-d]
 
+		'''
+		o o o
+		o C ^
+		o o x
+		'''
+		for k in range(-d, d+1):
+			if (iniJ+d in range(0,N))  and ( iniI+k in range(0,M)):
+				if inimg[iniI+k][iniJ+d] == 0:
+					if verificaVizinhanca( iniI+k, iniJ+d, conecto) == 1:
+						conecto[iniI+k][iniJ+d] = 1
+						#print [iniI+k, iniJ-d]
+
+		'''
+		o o o
+		o C o
+		x > o
+		'''
+		for k in range(-d, d):
+			if (iniI+d in range(0,M))  and ( iniJ+k in range(0,N)):
+				if inimg[iniI+d][iniJ+k] == 0:
+					if verificaVizinhanca( iniI+d, iniJ+k, conecto) == 1:
+						conecto[iniI+d][iniJ+k] = 1
+						#print [iniI+k, iniJ-d]
 
 
 	for i in range(0,M):
@@ -502,33 +559,103 @@ def listaConectos( inimg, iniI, iniJ):
 
 	return lista
 
+def verificaVizinhanca( pCi, pCj, matriz):
+	size = matriz.shape
 
+	for ki in range(-1,2):
+		if( pCi+ki in range(0,size[0])):
+			for kj in range(-1,2):
+				if(pCj+kj in range(0, size[1])):
+					if (ki != 0 and kj != 0):
+						if matriz[pCi+ki][pCj+kj] == 1:
+							return 1
 
-def bordaInterna( pat, input):
-	inimg = scpm.imread( pat+input)
+	return 0
 
-	outBorda = 255
-	borda = 100
-
-	listaInteran = ()
+def trataProximoBorda( pat, input, original, centro, raio):
+	inimg = scpm.imread(pat+input)
+	output = original + "_p6_v6.png"
 
 	size = inimg.shape
 	M = size[0]
 	N = size[1]
 
-	count = M*N/2
-	while count > 0:
-		count -= 1
-		ranI = randint(0, M-1)
-		ranJ = randint(0, N-1)
-		if( inimg[ranI][ranJ] == 0):
-			print "tete"
-			
+	zona = min(M/25,N/25)
 
-def bordaInterna_2( inimg, iniI, iniJ):
-	print "tste"
+	outimg = np.zeros([M,N])
+	for i in range(0,M):
+		for j in range(0,N):
+			outimg[i][j] = inimg[i][j]
+
+	print ("Raio: ", raio)
+	print ("Zona:", raio-zona, raio)
+	print ("Centro", centro)
+
+	outimg[centro[0]][centro[1]] = 200
+	ponto = []
+	print (min(M/25,N/25), min(M/10,N/10))
+	for i in range(0,M):
+		for j in range(0,N):
+			dist = distanciaEucl(centro,[i,j]) 
+			if dist > raio-zona and dist < raio:
+				if inimg[i][j] == 100:
+					if getFarsa( [i,j], centro, inimg) == 0:
+						outimg[i][j] = 0
+
+				outimg[i][j] += 20
+			if dist == raio-zona:
+				ponto = [i,j]
+
+	print ponto
+	thisang = math.atan2( ponto[1]-centro[1], ponto[0]-centro[0])
+	print thisang
+
+	thisang = math.degrees(thisang)
+	print thisang
 
 
+	for i in range(0,M):
+		for j in range(0,N):
+			ang = math.atan2( j-centro[1], i-centro[0])
+			ang = math.degrees(ang)
+			if ang > thisang-10 and ang < thisang + 10:
+				outimg[i][j] += 30
+
+	scpm.imsave( pathtemp+output, outimg)
+
+
+	return output
+
+def getFarsa( ponto, centro, inimg):
+	size = inimg.shape
+	M = size[0]
+	N = size[1]
+	zonaMin = min(M/25,N/25)
+	zonaMax = min(M/10,N/10)
+
+	count = 0
+
+	thisang = math.atan2( ponto[1]-centro[1], ponto[0]-centro[0])
+	thisang = math.degrees(thisang)
+
+	iMin = max(0, ponto[0]-M/7)
+	iMax = min(M, ponto[0]+M/7)
+	jMin = max(0, ponto[0]-N/7)
+	jMax = min(N, ponto[0]+N/7)
+	for i in range(iMin,iMax):
+		for j in range(jMin,jMax):
+			ang = math.atan2( j-centro[1], i-centro[0])
+			ang = math.degrees(ang)
+			if ang > thisang-2 and ang < thisang + 2:
+				if inimg[i][j] == 100:
+					dist = distanciaEucl([i,j], ponto)
+					if dist in range(0, 100):
+						#print dist
+						#return 1
+						count += 1
+	print count
+
+	return 0
 
 def roda( input, ext):
 	amostra = getAmostra( path, input, ext)
@@ -546,22 +673,25 @@ def roda( input, ext):
 	if borda == '-1':
 		return "ERRO"
 	#else: return borda
-	colonias = findColonia( path, input, ext, borda)
+	colonias = findColonia( path, input, ext, borda[0])
 	if colonias == '-1':
 		return "ERRO"
 	print colonias
 	#bordaInterna(pathtemp, colonias)
-	meio = teste(pathtemp, colonias, input)
-	print meio
+	#meio = teste_interno(pathtemp, colonias, input)
+	#print meio
 
-	conecto = conect(pathtemp, colonias,input)
-	print conecto
+	#conecto = conect(pathtemp, colonias,input)
+	#print conecto
+
+	#tratadoBorda = trataProximoBorda( pathtemp, colonias, input, borda[1], borda[2])
+	#print tratadoBorda
 
 	uniao = unionBorda( pathtemp, colonias, input, ext)
 	print uniao
 
 	original = scpm.imread(path+input+ext)
-	alt = scpm.imread(pathtemp+borda)
+	alt = scpm.imread(pathtemp+borda[0])
 	size = alt.shape
 	for i in range(size[0]):
 		for j in range(size[1]):
@@ -591,22 +721,24 @@ input = "placa_paint"
 ext = ".jpg"
 print roda( input, ext)
 '''
-
+'''
 input = "placa_listra"
 ext = ".jpg"
 print roda( input, ext)
 print '\n'
-
+'''
 #placa_pontos2.jpg nao funciona
 '''
 input = "placa_pontos2"
 ext = ".jpg"
 print roda( input, ext)
 '''
+'''
 input = "placa_ponto3"
 ext = ".jpeg"
 print roda( input, ext)
 print '\n'
+'''
 #placa_fungos.jpg nao funciona
 '''
 input = "placa_fungos"
